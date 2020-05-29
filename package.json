@@ -1,0 +1,32 @@
+{
+  "name": "electron-quick-start",
+  "version": "1.0.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "npm run pack:win:setup && npm run pack:win:7z",
+    "publish:win:setup": "cross-env TARGET=Setup ARCH=x64_x86 electron-builder -w=nsis --x64 --ia32 -p onTagOrDraft",
+    "pack:win:7z:x64": "cross-env TARGET=win_绿色版 ARCH=x64 electron-builder -w=7z --x64",
+    "publish:mac:dmg": "electron-builder -m=dmg -p onTagOrDraft"
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^9.0.0",
+    "electron-packager": "^14.2.1",
+    "video.js": "^7.7.5"
+  },
+  "dependencies": {
+    "ffmpeg": "0.0.4",
+    "fluent-ffmpeg": "^2.1.2"
+  }
+}
