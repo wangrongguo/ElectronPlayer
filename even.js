@@ -36,24 +36,7 @@ function oncliclFile() {
             console.log(error)
         }
         
-        const main = async () => {
-            const FFMPEGOperation = require('./ffmpegUtil')
-            const FFMPEGOperationObj = new FFMPEGOperation()
-            const videoPath = './input/01.mp4'
-            const outputPath = './output/'
-            //获取视频时长
-            const duration = await FFMPEGOperationObj.getVideoTotalDuration(videoPath)
-            console.log(duration)
-            //获取缩略图
-            await FFMPEGOperationObj.getVideoSceenshots(videoPath,outputPath,1,5)
-            //拆分视频
-            await FFMPEGOperationObj.splitVideo(videoPath,100,10,outputPath+'splitResult.mp4')
-          }
-          main().then().catch(console.error)
-          const flu_ffmpeg = require('fluent-ffmpeg');
-            flu_ffmpeg.ffprobe('./input/01.mp4', function(err, metadata) {
-                console.dir(metadata);
-            });
+        
             
     }).catch(err => {
         console.log(err)
@@ -84,16 +67,13 @@ ipcRenderer.on('data', function (event, message) {
 //最大化最小化监听，接收主线程过来的消息
 ipcRenderer.on('max', function (event, message) {
     console.log('max:', message)
-    var w = document.body.clientWidth;
-        var h = document.body.clientHeight;
-        myPlayer.width(w);
-        myPlayer.height(h);
-
+        myPlayer.width(message.width);
+        myPlayer.height(message.height);
 });
 
 
 //键盘监听
-var vol = 0.1;  //1代表100%音量，每次增减0.1
+var vol = 10;  //1代表100%音量，每次增减0.1
 var time = 10; //单位秒，每次增减10秒
 document.onkeyup = function (event) {//键盘事件
 
@@ -106,7 +86,7 @@ document.onkeyup = function (event) {//键盘事件
        
         // 按 向上键
         var howLoudIsIt = myPlayer.volume();
-        howLoudIsIt !== 1 ? myPlayer.volume(howLoudIsIt + vol) : 1;
+        howLoudIsIt !== 100 ? myPlayer.volume(howLoudIsIt + vol) : 100;
         return false;
 
     } else if (e && e.keyCode === 40) {

@@ -23,15 +23,35 @@ function createWindow() {
   })
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
-  //监听最大化最小化并发送消息
-  mainWindow.on('maximize', () => {
-    console.log("-----maximize---------")
-    mainWindow.webContents.send('max','max')
+  // if (process.platform === 'darwin'){
+  //   //mac监听全屏
+  //   mainWindow.on('enter-full-screen', function () {
+  //     console.log("enter");
+  //     mainWindow.webContents.send('max','max')
+  //   });
+    
+  //   mainWindow.on('leave-full-screen', function () {
+  //     console.log("leave");
+  //     mainWindow.webContents.send('max','max')
+  //   });
+  // }else{
+  //   //监听最大化最小化并发送消息win
+  //   mainWindow.on('maximize', () => {
+  //     console.log("-----maximize---------")
+  //     mainWindow.webContents.send('max','max')
+  //   })
+  //   mainWindow.on('unmaximize', () => {
+  //     console.log("-----unmaximize---------")
+  //     mainWindow.webContents.send('max','max')
+  //   })
+  // }
+  //监听当前屏幕大小
+  mainWindow.on('resize',() => {
+    console.log(mainWindow.getContentBounds())
+    mainWindow.webContents.send('max',mainWindow.getContentBounds())
   })
-  mainWindow.on('unmaximize', () => {
-    console.log("-----unmaximize---------")
-    mainWindow.webContents.send('max','max')
-  })
+
+  
 }
 
 // This method will be called when Electron has finished
