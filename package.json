@@ -1,5 +1,5 @@
 {
-  "name": "electron-quick-start",
+  "name": "electron_player",
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
@@ -10,7 +10,7 @@
     "pack:win:7z:x64": "cross-env TARGET=win_绿色版 ARCH=x64 electron-builder -w=7z --x64",
     "publish:mac:dmg": "electron-builder -m=dmg -p onTagOrDraft"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/wangrongguo/ElectronPlayer",
   "keywords": [
     "Electron",
     "quick",

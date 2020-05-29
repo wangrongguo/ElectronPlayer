@@ -1,26 +1,107 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
-  <title>Hello World!</title>
+  <title>视频播放器</title>
   <link rel="stylesheet" href="video-js.css">
-  <script type="text/javascript" src="js/jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+  <script type="text/javascript" src="jquery.js" onload="window.$ = window.jQuery = module.exports;"></script>
   <script src="video.js"></script>
   <style>
-    body{
+    body {
       margin: 0px !important;
+      overflow-x: hidden;
+      overflow-y: hidden;
     }
+
     video{
       outline: -webkit-focus-ring-color auto 0px;
     }
+    button{
+      outline: -webkit-focus-ring-color auto 0px;
+    }
+    .videoTime{
+      color: white;
+      width: 100px;
+      height: 50px;
+      position: absolute;
+      margin: auto;
+      top: 0rem;
+      left: 2rem;
+      transition: opacity 500ms ease-out,
+        background-color 300ms;
+      -webkit-app-region: no-drag;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .dropArea {
+      color: white;
+      background-color: #444444;
+      width: 50%;
+      height: 50%;
+      position: absolute;
+      margin: auto;
+      top: 0rem;
+      bottom: 0rem;
+      left: 0rem;
+      right: 0rem;
+      transition: opacity 500ms ease-out,
+        background-color 300ms;
+      -webkit-app-region: no-drag;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .openFile {
+      font-size: 2rem;
+      width: 10rem;
+      height: 4rem;
+      line-height: 0rem;
+      color: white;
+      background-color: #666666;
+      margin: 0rem;
+      border-width: 0rem;
+      border-radius: 5rem;
+    }
+
+    .openFile:hover {
+      background-color: #45b005;
+    }
+
+    .dropZone {
+      font-size: 2rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    .hide {
+      display: none;
+    }
   </style>
 </head>
-<body style="margin: 0px !important;">
+
+<body>
   <!--<button onclick="oncliclFile()">选择文件</button>-->
-  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="800" height="600"
+  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="800" height="578"
     poster="" data-setup="{}">
-    <source src="" id="pathFile_id" />
+    <source src="http://vjs.zencdn.net/v/oceans.mp4" id="pathFile_id" />
   </video>
+  <section id='dropArea' class='dropArea'>
+    <div class='dropZone'>拖动文件到这里</div>
+    <button id='openFile-1' class='openFile' onclick="oncliclFile()">打开文件</button>
+  </section>
+  <section id="videoTime" class="videoTime">
+    00:00:00
+  </section>
   <script src="even.js"></script>
 </body>
+
 </html>
