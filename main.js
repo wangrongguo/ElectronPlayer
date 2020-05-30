@@ -5,10 +5,10 @@ const path = require('path')
 let mainWindow;
 function createWindow() {
   // Create the browser window.
-   mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    show:false,
+    show: false,
     webPreferences: {
       // preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true
@@ -17,9 +17,9 @@ function createWindow() {
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
-  mainWindow.once('ready-to-show',function(){
+  mainWindow.once('ready-to-show', function () {
     mainWindow.show();
-    mainWindow.webContents.send('max','max');
+    mainWindow.webContents.send('max', 'max');
   })
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
@@ -29,7 +29,7 @@ function createWindow() {
   //     console.log("enter");
   //     mainWindow.webContents.send('max','max')
   //   });
-    
+
   //   mainWindow.on('leave-full-screen', function () {
   //     console.log("leave");
   //     mainWindow.webContents.send('max','max')
@@ -46,12 +46,12 @@ function createWindow() {
   //   })
   // }
   //监听当前屏幕大小
-  mainWindow.on('resize',() => {
+  mainWindow.on('resize', () => {
     console.log(mainWindow.getContentBounds())
-    mainWindow.webContents.send('max',mainWindow.getContentBounds())
+    mainWindow.webContents.send('max', mainWindow.getContentBounds())
   })
 
-  
+
 }
 
 // This method will be called when Electron has finished
@@ -84,19 +84,8 @@ app.on('window-all-closed', function () {
  */
 let template = [
   {
-    label: 'File（选择文件）',
+    label: 'Edit（操作）',
     submenu: [{
-      label: 'File（选择文件）',
-      accelerator: 'CmdOrCtrl+Q',
-      click: function (item, f) {
-        var option = {};
-        option.title = "打开";
-        dialog.showOpenDialog(option).then(result => { 
-          console.log(result.filePaths)
-          mainWindow.webContents.send('data',{name:'filepath',path:result.filePaths})
-        })
-      }
-    }, {
       label: 'Copy ( 复制 )',
       accelerator: 'CmdOrCtrl+C',
       role: 'copy'
@@ -110,6 +99,17 @@ let template = [
     label: 'Window ( 窗口 )',
     role: 'window',
     submenu: [{
+      label: 'File（打开文件）',
+      accelerator: 'CmdOrCtrl+Q',
+      click: function (item, f) {
+        var option = {};
+        option.title = "打开";
+        dialog.showOpenDialog(option).then(result => {
+          console.log(result.filePaths)
+          mainWindow.webContents.send('data', { name: 'filepath', path: result.filePaths })
+        })
+      }
+    }, {
       label: 'Minimize ( 最小化 )',
       accelerator: 'CmdOrCtrl+M',
       role: 'minimize'

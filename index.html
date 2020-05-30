@@ -12,6 +12,7 @@
       margin: 0px !important;
       overflow-x: hidden;
       overflow-y: hidden;
+      background-color: black;
     }
 
     video{
@@ -40,7 +41,7 @@
     }
     .dropArea {
       color: white;
-      background-color: #444444;
+      /* background-color: #444444; */
       width: 50%;
       height: 50%;
       position: absolute;
@@ -61,9 +62,9 @@
     }
 
     .openFile {
-      font-size: 2rem;
+      font-size: 1rem;
       width: 10rem;
-      height: 4rem;
+      height: 3rem;
       line-height: 0rem;
       color: white;
       background-color: #666666;
@@ -85,17 +86,20 @@
     .hide {
       display: none;
     }
+    .vjs-big-play-button{
+      display: none !important;
+    }
   </style>
 </head>
 
 <body>
   <!--<button onclick="oncliclFile()">选择文件</button>-->
-  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="800" height="578"
-    poster="" data-setup="{}">
+  <video id="example_video_1" class="video-js vjs-default-skin hide" controls preload="none" width="800" height="578"
+    poster="">
     <source src="http://vjs.zencdn.net/v/oceans.mp4" id="pathFile_id" />
   </video>
   <section id='dropArea' class='dropArea'>
-    <div class='dropZone'>拖动文件到这里</div>
+    <!-- <div class='dropZone'>拖动文件到这里</div> -->
     <button id='openFile-1' class='openFile' onclick="oncliclFile()">打开文件</button>
   </section>
   <section id="videoTime" class="videoTime">

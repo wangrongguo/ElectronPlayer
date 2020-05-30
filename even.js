@@ -8,31 +8,11 @@ function oncliclFile() {
     var option = {};
     option.title = "打开";
     dialog.showOpenDialog(option).then(result => {
-        // console.log(result)
-        // console.log(result[0].filePaths)
-        // console.log(result.filePaths)
+        
         try {
-            var videoUrl = result.filePaths;
-            if (myPlayer == undefined) {
-                myPlayer = videojs('example_video_1');
-            }
-            var v = document.getElementById("pathFile_id");
-            v.src = videoUrl;
-            var w = initwh.width;
-            var h = initwh.height;
-            myPlayer.width(w);
-            myPlayer.height(h);
-            myPlayer.src(videoUrl);
-            myPlayer.load(videoUrl);
-            myPlayer.play();
-            //实时监听时间
-            myPlayer.on("timeupdate",function(){
-                // console.log('--time---')
-                var videoTime = document.getElementById("videoTime");
-                videoTime.innerHTML = formatDate(myPlayer.currentTime())+"/"+formatDate(myPlayer.duration());
-            });
-            showFileArea(true);
-
+            var videoUrl = result.filePaths[0];
+            //播放
+            videoPlaying(videoUrl);
 
         } catch (error) {
             console.log(error)
@@ -55,29 +35,20 @@ function showFileArea(show) {
     } catch (error) {
     }
 }
+function showVideoPlay(show) {
+    //显示打开文件的按钮
+    try {
+        let ev = document.getElementById('example_video_1');
+        show ? ev.classList.remove('hide') : ev.classList.add('hide');
+    } catch (error) {
+    }
+}
 
 ipcRenderer.on('data', function (event, message) {
     // console.log('data:', message)
     var videoUrl = message.path[0];
-    if (myPlayer == undefined) {
-        myPlayer = videojs('example_video_1');
-    }
-    var v = document.getElementById("pathFile_id");
-    v.src = videoUrl;
-    var w = initwh.width;
-    var h = initwh.height;
-    myPlayer.width(w);
-    myPlayer.height(h);
-    myPlayer.src(videoUrl);
-    myPlayer.load(videoUrl);
-    myPlayer.play();
-    //实时监听时间
-    myPlayer.on("timeupdate",function(){
-        // console.log('--time---')
-        var videoTime = document.getElementById("videoTime");
-        videoTime.innerHTML = formatDate(myPlayer.currentTime())+"/"+formatDate(myPlayer.duration());
-    });
-    showFileArea(true);
+    //播放
+    videoPlaying(videoUrl);
 
 });
 
@@ -91,6 +62,64 @@ ipcRenderer.on('max', function (event, message) {
 
 });
 
+//播放
+function videoPlaying(videoUrl) {
+    var v = document.getElementById("pathFile_id");
+    v.src = videoUrl;
+    //处理路径中的文件格式
+    var first = videoUrl.lastIndexOf(".");//取到文件名开始到最后一个点的长度
+    var namelength = videoUrl.length;//取到文件名长度
+    var fileType = videoUrl.substring(first + 1, namelength);//截取获得后缀名
+    console.log(videoUrl);
+    console.log(fileType);
+    if (fileType.toLowerCase() == 'mp4') {
+        v.setAttribute('type', 'video/mp4')
+    } else if (fileType.toLowerCase() == 'mkv') {
+        v.setAttribute('type', 'video/webm')
+    }else if(fileType.toLowerCase() == 'rmvb'){
+        //不支持rmvb
+        return false;
+    }else {
+        //默认MP4
+        v.setAttribute('type', 'video/mp4')
+    }
+    var w = initwh.width;
+    var h = initwh.height;
+    showVideoPlay(true);
+    if (myPlayer == undefined) {
+        myPlayer = videojs('example_video_1');
+        myPlayer.ready(function () {
+            myPlayer = this;
+            myPlayer.width(w);
+            myPlayer.height(h);
+            myPlayer.src(videoUrl);
+            myPlayer.load(videoUrl);
+            myPlayer.play();
+            //实时监听时间
+            myPlayer.on("timeupdate", function () {
+                // console.log('--time---')
+                var videoTime = document.getElementById("videoTime");
+                videoTime.innerHTML = formatDate(myPlayer.currentTime()) + "/" + formatDate(myPlayer.duration());
+            });
+            //视频错误监听
+            myPlayer.on('error', function (e) {
+                console.log(e)
+                myPlayer.errorDisplay.close();   //将错误信息不显示
+                
+            });
+        });
+    } else {
+        myPlayer.width(w);
+        myPlayer.height(h);
+        myPlayer.src(videoUrl);
+        myPlayer.load(videoUrl);
+        myPlayer.play();
+        
+    }
+
+
+    showFileArea(true);
+}
 
 //键盘监听
 var vol = 10;  //1代表100%音量，每次增减0.1
@@ -121,7 +150,7 @@ document.onkeyup = function (event) {//键盘事件
         // 按 向左键
         var n = myPlayer.currentTime();
         var videoTime = document.getElementById("videoTime");
-        videoTime.innerHTML = formatDate(n - time)+"/"+formatDate(myPlayer.duration());
+        videoTime.innerHTML = formatDate(n - time) + "/" + formatDate(myPlayer.duration());
         n !== 0 ? myPlayer.currentTime(n - time) : 1;
         return false;
 
@@ -130,7 +159,7 @@ document.onkeyup = function (event) {//键盘事件
         // 按 向右键
         var n = myPlayer.currentTime();
         var videoTime = document.getElementById("videoTime");
-        videoTime.innerHTML = formatDate(n + time)+"/"+formatDate(myPlayer.duration());
+        videoTime.innerHTML = formatDate(n + time) + "/" + formatDate(myPlayer.duration());
         n !== 0 ? myPlayer.currentTime(n + time) : 1;
         return false;
 
@@ -139,8 +168,8 @@ document.onkeyup = function (event) {//键盘事件
         // 按空格键 判断当前是否暂停
         // console.log(myPlayer.paused())
         // console.log(myPlayer.played())
-        if(myPlayer != undefined)
-        myPlayer.paused() === true ? myPlayer.play() : myPlayer.pause();
+        if (myPlayer != undefined)
+            myPlayer.paused() === true ? myPlayer.play() : myPlayer.pause();
         return false;
     }
 
@@ -148,6 +177,9 @@ document.onkeyup = function (event) {//键盘事件
 //时间转化
 function formatDate(value) {
     var secondTime = parseInt(value);// 秒
+    if(secondTime === 0 || secondTime < 0){
+        return "00:00:00";
+    }
     var minuteTime = 0;// 分
     var hourTime = 0;// 时
     if (secondTime > 60) {//如果秒数大于60，将秒数转换成整数
@@ -163,15 +195,15 @@ function formatDate(value) {
             minuteTime = parseInt(minuteTime % 60);
         }
     }
-    var result = "" + (parseInt(secondTime)<10?("0"+parseInt(secondTime)):parseInt(secondTime));
+    var result = "" + (parseInt(secondTime) < 10 ? ("0" + parseInt(secondTime)) : parseInt(secondTime));
     if (minuteTime > 0) {
-        result = "" + (parseInt(minuteTime)<10?("0"+parseInt(minuteTime)):parseInt(minuteTime)) + ":" + result;
+        result = "" + (parseInt(minuteTime) < 10 ? ("0" + parseInt(minuteTime)) : parseInt(minuteTime)) + ":" + result;
     } else {
         result = "00:" + result;
     }
     if (hourTime > 0) {
-        result = "" + (parseInt(hourTime)<10?("0"+parseInt(hourTime)):parseInt(hourTime)) + ":" + result;
-    }else{
+        result = "" + (parseInt(hourTime) < 10 ? ("0" + parseInt(hourTime)) : parseInt(hourTime)) + ":" + result;
+    } else {
         result = "00:" + result;
     }
     return result;
