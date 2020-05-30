@@ -1,13 +1,13 @@
 ## ElectronPlayer
-Electron 9.0.0
-video.js
-简易视频播放器
+# Electron 9.0.0
+# video.js
+# 简易视频播放器
 
 
 ## video.js支持的视频格式
-<source src="http://视频地址格式1.mp4" type='video/mp4' />
-<source src="http://视频地址格式2.webm" type='video/webm' />
-<source src="http://视频地址格式3.ogv" type='video/ogg' />
+# <source src="http://视频地址格式1.mp4" type='video/mp4' />
+# <source src="http://视频地址格式2.webm" type='video/webm' />
+# <source src="http://视频地址格式3.ogv" type='video/ogg' />
 
 
 ## To Use
