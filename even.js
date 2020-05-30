@@ -64,6 +64,9 @@ ipcRenderer.on('max', function (event, message) {
 
 //播放
 function videoPlaying(videoUrl) {
+    if(videoUrl === undefined){
+        return false;
+    }
     var v = document.getElementById("pathFile_id");
     v.src = videoUrl;
     //处理路径中的文件格式

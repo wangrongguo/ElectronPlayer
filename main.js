@@ -84,7 +84,7 @@ app.on('window-all-closed', function () {
  */
 let template = [
   {
-    label: 'Edit（操作）',
+    label: 'Edit（ 操作 ）',
     submenu: [{
       label: 'Copy ( 复制 )',
       accelerator: 'CmdOrCtrl+C',
@@ -98,6 +98,20 @@ let template = [
   {
     label: 'Window ( 窗口 )',
     role: 'window',
+    submenu: [ {
+      label: 'Minimize ( 最小化 )',
+      accelerator: 'CmdOrCtrl+M',
+      role: 'minimize'
+    }, {
+      label: 'Close ( 关闭 )',
+      accelerator: 'CmdOrCtrl+W',
+      role: 'close'
+    }, {
+      type: 'separator'
+    }]
+  },{
+    label: 'View ( 打开 ) ',
+    role: 'view',
     submenu: [{
       label: 'File（打开文件）',
       accelerator: 'CmdOrCtrl+Q',
@@ -109,25 +123,15 @@ let template = [
           mainWindow.webContents.send('data', { name: 'filepath', path: result.filePaths })
         })
       }
-    }, {
-      label: 'Minimize ( 最小化 )',
-      accelerator: 'CmdOrCtrl+M',
-      role: 'minimize'
-    }, {
-      label: 'Close ( 关闭 )',
-      accelerator: 'CmdOrCtrl+W',
-      role: 'close'
-    }, {
-      type: 'separator'
     }]
   },
   {
     label: 'Help ( 帮助 ) ',
     role: 'help',
     submenu: [{
-      label: 'FeedBack ( 意见反馈 )',
+      label: 'Learn More ( 关于 )',
       click: function () {
-        electron.shell.openExternal('https://forum.iptchain.net')
+        require('electron').shell.openExternal('https://github.com/wangrongguo/ElectronPlayer')
       }
     }]
   }
