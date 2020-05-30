@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
+  "icon": "icon.ico",
   "scripts": {
     "start": "electron .",
     "pack": "npm run pack:win:setup && npm run pack:win:7z",
@@ -28,5 +29,19 @@
   "dependencies": {
     "ffmpeg": "0.0.4",
     "fluent-ffmpeg": "^2.1.2"
+  },
+  "build": {
+    "dmg": {
+      "icon": "icon.ico"
+    },
+    "mac": {
+      "icon": "icon.ico"
+    },
+    "win": {
+      "icon": "icon.ico"
+    },
+    "linux": {
+      "icon": "icon.ico"
+    }
   }
 }
