@@ -6,8 +6,8 @@
   <title>视频播放器</title>
   <link rel="stylesheet" href="video-js.css">
   <link rel="shortcut icon" href="icon.ico"/>
-  <script type="text/javascript" src="jquery.js" onload="window.$ = window.jQuery = module.exports;"></script>
-  <script src="video.js"></script>
+  <!-- <script type="text/javascript" src="jquery.js" onload="window.$ = window.jQuery = module.exports;"></script> -->
+  <!-- <script src="video.js"></script> -->
   <style>
     body {
       margin: 0px !important;
@@ -95,10 +95,13 @@
 
 <body>
   <!--<button onclick="oncliclFile()">选择文件</button>-->
-  <video id="example_video_1" class="video-js vjs-default-skin hide" controls preload="none" width="800" height="578"
+  <div id="video-container">
+  <!-- <video id="example_video_1" class="video-js vjs-default-skin hide" controls preload="none" width="800" height="578"
     poster="">
     <source src="http://vjs.zencdn.net/v/oceans.mp4" id="pathFile_id" />
-  </video>
+  </video> -->
+  </div>
+  
   <section id='dropArea' class='dropArea'>
     <!-- <div class='dropZone'>拖动文件到这里</div> -->
     <button id='openFile-1' class='openFile' onclick="oncliclFile()">打开文件</button>
@@ -106,6 +109,7 @@
   <section id="videoTime" class="videoTime">
     00:00:00
   </section>
+ 
   <script src="even.js"></script>
 </body>
 

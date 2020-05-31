@@ -1,18 +1,22 @@
 const remote = require('electron').remote;
 const dialog = remote.dialog;
 const ipcMain = remote.ipcMain;
+const videojs = require('video.js');
 var myPlayer = undefined;
 const ipcRenderer = require('electron').ipcRenderer;
 const initwh = remote.getCurrentWindow().getContentBounds();
+
 function oncliclFile() {
     var option = {};
     option.title = "打开";
     dialog.showOpenDialog(option).then(result => {
-        
+
         try {
             var videoUrl = result.filePaths[0];
             //播放
-            videoPlaying(videoUrl);
+            // videoPlaying(videoUrl);
+            //回传判断视频格式
+            ipcRenderer.send("openBtnFilePath", videoUrl);
 
         } catch (error) {
             console.log(error)
@@ -36,7 +40,7 @@ function showFileArea(show) {
     }
 }
 function showVideoPlay(show) {
-    //显示打开文件的按钮
+    //显示播放器
     try {
         let ev = document.getElementById('example_video_1');
         show ? ev.classList.remove('hide') : ev.classList.add('hide');
@@ -52,6 +56,55 @@ ipcRenderer.on('data', function (event, message) {
 
 });
 
+let videoContainer = document.getElementById("video-container")
+function createVideoHtml(source){
+    let videoHtml =
+    `<video id="example_video_1" class="video-js vjs-big-play-centered" controls preload="auto" width="800"
+    height="578" data-setup="{}">
+    <source src="${source}" type="video/mp4" id="pathFile_id">
+    <p class="vjs-no-js">
+    To view this video please enable JavaScript, and consider upgrading to a web browser that
+    <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+    </p>
+    </video>`
+    return videoHtml;
+}
+//播放别的
+ipcRenderer.on('fileSelected', function (event, message) {
+    console.log('fileSelected:', message)
+    // let vid = document.getElementById("my-video");
+
+    // videojs(vid).dispose();
+
+    videoContainer.innerHTML = createVideoHtml(message.videoSource);
+    vid = document.getElementById("example_video_1");
+    if (message.type === 'native') {
+        player = videojs(vid);
+        myPlayer = player;
+        player.play();
+        //监听时间变化
+        player.on("timeupdate", function () {
+            var videoTime = document.getElementById("videoTime");
+            videoTime.innerHTML = formatDate(myPlayer.currentTime()) + "/" + formatDate(myPlayer.duration());
+        });
+        
+    } else if (message.type === 'stream') {
+        player = videojs(vid, {}, () => {
+            myPlayer = player;
+            player.play();
+            //监听时间变化
+            player.on("timeupdate", function () {
+                var videoTime = document.getElementById("videoTime");
+                videoTime.innerHTML = formatDate(myPlayer.currentTime()) + "/" + formatDate(message.duration);
+            });
+        });
+    }
+    // myPlayer = player;
+    showFileArea(true)
+    // videoPlaying(message.videoSource)
+
+});
+
 //最大化最小化监听，接收主线程过来的消息
 ipcRenderer.on('max', function (event, message) {
     // console.log('max:', message)
@@ -64,61 +117,33 @@ ipcRenderer.on('max', function (event, message) {
 
 //播放
 function videoPlaying(videoUrl) {
-    if(videoUrl === undefined){
+    if (videoUrl === undefined) {
         return false;
     }
-    var v = document.getElementById("pathFile_id");
-    v.src = videoUrl;
-    //处理路径中的文件格式
-    var first = videoUrl.lastIndexOf(".");//取到文件名开始到最后一个点的长度
-    var namelength = videoUrl.length;//取到文件名长度
-    var fileType = videoUrl.substring(first + 1, namelength);//截取获得后缀名
-    console.log(videoUrl);
-    console.log(fileType);
-    if (fileType.toLowerCase() == 'mp4') {
-        v.setAttribute('type', 'video/mp4')
-    } else if (fileType.toLowerCase() == 'mkv') {
-        v.setAttribute('type', 'video/webm')
-    }else if(fileType.toLowerCase() == 'rmvb'){
-        //不支持rmvb
-        return false;
-    }else {
-        //默认MP4
-        v.setAttribute('type', 'video/mp4')
-    }
+    
     var w = initwh.width;
     var h = initwh.height;
     showVideoPlay(true);
-    if (myPlayer == undefined) {
-        myPlayer = videojs('example_video_1');
-        myPlayer.ready(function () {
-            myPlayer = this;
-            myPlayer.width(w);
-            myPlayer.height(h);
-            myPlayer.src(videoUrl);
-            myPlayer.load(videoUrl);
-            myPlayer.play();
-            //实时监听时间
-            myPlayer.on("timeupdate", function () {
-                // console.log('--time---')
-                var videoTime = document.getElementById("videoTime");
-                videoTime.innerHTML = formatDate(myPlayer.currentTime()) + "/" + formatDate(myPlayer.duration());
-            });
-            //视频错误监听
-            myPlayer.on('error', function (e) {
-                console.log(e)
-                myPlayer.errorDisplay.close();   //将错误信息不显示
-                
-            });
-        });
-    } else {
-        myPlayer.width(w);
-        myPlayer.height(h);
-        myPlayer.src(videoUrl);
-        myPlayer.load(videoUrl);
-        myPlayer.play();
-        
+    
+    let vid = document.getElementById("example_video_1");
+    if(vid != undefined){
+        videojs(vid).dispose();
     }
+    
+    videoContainer.innerHTML = createVideoHtml(videoUrl);
+    vid = document.getElementById("example_video_1");
+    player = videojs(vid, {}, () => {
+        myPlayer = player;
+        player.width(w);
+        player.height(h);
+        player.play();
+        
+        player.on("timeupdate", function () {
+            // console.log('--time---')
+            var videoTime = document.getElementById("videoTime");
+            videoTime.innerHTML = formatDate(myPlayer.currentTime()) + "/" + formatDate(myPlayer.duration());
+        });
+    });
 
 
     showFileArea(true);
@@ -160,10 +185,11 @@ document.onkeyup = function (event) {//键盘事件
     } else if (e && e.keyCode === 39) {
 
         // 按 向右键
+        
         var n = myPlayer.currentTime();
         var videoTime = document.getElementById("videoTime");
         videoTime.innerHTML = formatDate(n + time) + "/" + formatDate(myPlayer.duration());
-        n !== 0 ? myPlayer.currentTime(n + time) : 1;
+        n !== myPlayer.duration() ? myPlayer.currentTime(n + time) : myPlayer.duration();
         return false;
 
     } else if (e && e.keyCode === 32) {
@@ -180,7 +206,7 @@ document.onkeyup = function (event) {//键盘事件
 //时间转化
 function formatDate(value) {
     var secondTime = parseInt(value);// 秒
-    if(secondTime === 0 || secondTime < 0){
+    if (secondTime === 0 || secondTime < 0) {
         return "00:00:00";
     }
     var minuteTime = 0;// 分
@@ -211,3 +237,6 @@ function formatDate(value) {
     }
     return result;
 }
+
+
+ipcRenderer.send("ipcRendererReady", "true");
