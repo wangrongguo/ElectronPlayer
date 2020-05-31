@@ -1,7 +1,7 @@
 const remote = require('electron').remote;
 const dialog = remote.dialog;
 const ipcMain = remote.ipcMain;
-const videojs = require('video.js');
+// const videojs = require('video.js');
 var myPlayer = undefined;
 const ipcRenderer = require('electron').ipcRenderer;
 const initwh = remote.getCurrentWindow().getContentBounds();
